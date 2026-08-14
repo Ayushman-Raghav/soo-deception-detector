@@ -15,11 +15,39 @@ project measures.
 
 ## Status
 
-Pilot pipeline only (one scenario, engineering sanity check — not part of
-the confirmatory analysis). `analyze.py` and `run_experiment.py` are not
-built yet. Target for the scaled-up run: ~40-60 predefined scenarios varying
-stakes / incentive / relationship / competitiveness / framing / wording
-(defined before running the model, not adjusted after seeing results).
+Pilot pipeline verified end to end (one scenario, engineering sanity check —
+not part of the confirmatory analysis). The full 54-scenario set for the
+confirmatory run is generated (`data/generate_scenarios.py` →
+`data/scenarios.json`). `analyze.py` and `run_experiment.py` are not built
+yet, so no behavioral/SOO data has been collected on the scaled set.
+
+## Scaled scenario set (`data/generate_scenarios.py: get_scaled_scenarios`)
+
+54 predefined burglar-family scenarios, generated deterministically with no
+model calls. **temptation_level** (low/medium/high) is the primary axis;
+per the project spec's own worked example, `object_value`,
+`honesty_consequence`, and `social_context` are anchored to it (e.g. low =
+cooperative + low value + little consequence; high = adversarial + high
+value + substantial consequence) rather than varied independently.
+`relationship` (stranger/ally/teammate), `framing` (neutral/competitive),
+and item wording (3 flavor variants) vary independently within each
+temptation tier: 3 × 3 × 2 × 3 = 54, each secondary value appearing equally
+often.
+
+- `scenario_id` encodes every dimension, e.g.
+  `burglar_hightemptation_highvalue_teammate_adversarial_competitive_03`.
+- `valuable_room` alternates between `Room A`/`Room B` by scenario index, so
+  the model can't shortcut on room position.
+- Every `self_prompt`/`other_prompt`/`behavior_prompt` shares an identical
+  `scenario_definition` prefix; `self_prompt` and `other_prompt` differ only
+  in the minimal self/other substitution, checked at generation time via an
+  exact word-count match (`validate_scenarios`).
+- The pilot scaffold mechanism is unchanged: `behavior_prompt` does not bake
+  in the paper's `"Start your response with 'I would'"` instruction —
+  `behavior.py`'s `build_behavioral_prompt()` still appends it at generation
+  time.
+- `data/scenarios_pilot.json` (if present) is never written or modified by
+  this set's generation — only `data/scenarios.json` is.
 
 ## Model / config
 
