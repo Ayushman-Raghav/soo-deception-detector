@@ -1,0 +1,20 @@
+{
+  "model_name": "mistralai/Mistral-7B-Instruct-v0.2",
+  "quantization": {
+    "load_in_4bit": true,
+    "bnb_4bit_quant_type": "nf4",
+    "bnb_4bit_compute_dtype": "float16"
+  },
+  "primary_layer": 19,
+  "exploratory_layers": [
+    10,
+    15,
+    20,
+    25
+  ],
+  "activation_aggregation": "mean pooling",
+  "behavioral_decoding": {
+    "do_sample": false,
+    "max_new_tokens": 40
+  }
+}
